@@ -1,0 +1,14 @@
+import { Router } from "express";
+import loginController from "../app/controllers/login/login.controller";
+import instanceController from "../app/controllers/instance/instance.controller";
+
+const router: Router = Router();
+
+router.get("/instance/list", instanceController.getList);
+router.get("/instance/:id/logs", instanceController.getLogs);
+router.get("/instance/:id/user-info", instanceController.getUserInfo);
+router.get("/instance/:id/enroute-list", instanceController.getEnrouteList);
+router.get("/instance/:id/stopMonitoring", instanceController.stopMonitoring);
+router.post("/login", loginController.login);
+
+export { router };

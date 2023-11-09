@@ -5,5 +5,5 @@ export interface ILoggerControl {
 
 export const loggerControl: ILoggerControl = {
     trainInfo: false,
-    userInfo: true,
+    userInfo: false,
 }

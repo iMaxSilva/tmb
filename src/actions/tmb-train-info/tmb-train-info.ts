@@ -30,10 +30,10 @@ class TMBTrainInfo {
         };
     }
 
-    async getTrainInfo(
+    getTrainInfo(
         userData: IUserInfo,
-    ): Promise<Record<string, ITrainInfo>> {
-        const trainIds = Object.keys(userData.liveData);
+    ): Record<string, ITrainInfo> {
+        const trainIds = Object.keys(userData?.liveData);
         const trainInfo: Record<string, ITrainInfo> = {};
 
         for (const trainId of trainIds) {
