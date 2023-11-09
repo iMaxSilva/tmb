@@ -14,13 +14,8 @@ export function calculateTime(liveData: LiveData): string {
 
   const hoursRemaining = Math.floor(timeRemaining / 3600);
   const minutesRemaining = Math.floor((timeRemaining % 3600) / 60);
-  const secondsRemaining = Math.floor(timeRemaining % 60);
 
   let timeString = `${hoursRemaining}h ${minutesRemaining}min`;
-
-  if (secondsRemaining > 0) {
-    timeString += ` ${secondsRemaining}s`;
-  }
 
   return timeString;
 }

@@ -11,6 +11,7 @@ import TMBBuyMarketing from "../actions/tmb-buy-marketing/tmb-buy-marketing";
 import { calculateMinTimeToDestination } from "../utils/calculate-time/calculate-time.util";
 import { ITrainInfo } from "../models/train-info/train-info.interface";
 import { loggerControl } from "../shared/loggerControl";
+import { ILogger } from "../models/logger/logger.interface";
 
 export default class TMBCore {
     public username: string;
@@ -60,8 +61,8 @@ export default class TMBCore {
         return await this.tmbUserInfo.getInfo();
     }
 
-    async trainInfo(userData: IUserInfo): Promise<Record<string, ITrainInfo>> {
-        return await this.tmbTrainInfo.getTrainInfo(userData);
+    trainInfo(userData: IUserInfo): Record<string, ITrainInfo> {
+        return this.tmbTrainInfo.getTrainInfo(userData);
     }
 
     async departAll(): Promise<void> {
@@ -72,11 +73,16 @@ export default class TMBCore {
         await this.tmbBuyMarketing.buyCampaign();
     }
 
-    showLogs(): void {
+    showLogs(type?: string): ILogger[] | void {
         const logs = this.loggerUtil.getLogs();
-        logs.forEach((log) => {
-            console.log(`${log.type} ${log.message}`);
-        });
+        if(type === 'object') {
+            return logs;
+        } else {
+            logs.forEach((log) => {
+                console.log(`${log.type} ${log.message}`);
+            });
+        }
+        
     }
 
     start(): void {
@@ -93,9 +99,15 @@ export default class TMBCore {
                 await this.buyFuel();
                 await this.departAll();
                 this.timeout = setTimeout(() => this.monitorUserData(), 60000);
+                return;
             }
-
-            const trainInfo = await this.trainInfo(userData!);
+            
+            const trainInfo = this.trainInfo(userData!);
+            const updateInterval = Math.max(
+                calculateMinTimeToDestination(trainInfo) * 1000 + 120000,
+                10000,
+            );
+            
             this.trainIds = Object.values(trainInfo).map(
                 (train) => train.realTrainId,
             );
@@ -104,11 +116,6 @@ export default class TMBCore {
                 await this.tmbUserInfo.sendInfoToLogger(userData!);
             if (loggerControl.trainInfo)
                 await this.tmbTrainInfo.sendTrainInfoToLogger(trainInfo);
-
-            const updateInterval = Math.max(
-                calculateMinTimeToDestination(trainInfo) * 1000 + 120000,
-                10000,
-            );
 
             this.loggerUtil.addLog(
                 "[INFO]",
@@ -126,8 +133,7 @@ export default class TMBCore {
                 );
                 this.loggerUtil.addLog(
                     "[INFO]",
-                    `O sistema está na ${
-                        this.retryCount + 1
+                    `O sistema está na ${this.retryCount + 1
                     }ª tentativa de reconexão.`,
                 );
                 this.retryCount++;

@@ -13,12 +13,8 @@ class TMBUserInfo {
             const response = await this.httpClient.get<IUserInfo>(
                 "/data/main.user.data.php",
             );
-            this.loggerUtil.addLog(
-                "[INFO]",
-                "Informações do usuário coletadas.",
-            );
             return {
-                liveData: response.data.liveData,
+                liveData: response.data?.liveData,
                 userData: response.data.userData,
             };
         } catch (error) {

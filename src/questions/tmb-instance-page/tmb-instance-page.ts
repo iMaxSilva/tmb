@@ -7,8 +7,6 @@ import {
 import TMBCore from "../../core/tmb-core";
 import { tmbMainPage } from "../tmb-main-page/tmb-main-page";
 import { tmbStopMonitoring } from "../../actions/tmb-stop-monitoring/tmb-stop-monitoring";
-import { userMonitors } from "../../shared/usersMonitors.arr";
-import { tmbInstanceListPage } from "../tmb-instance-list-page/tmb-instance-list-page";
 
 export async function tmbInstancePage(monitor: TMBCore) {
     const list: IChoice[] = [
@@ -68,26 +66,13 @@ export async function tmbInstancePage(monitor: TMBCore) {
             case InstancePageChoiceEnum.MAIN_MENU:
                 console.clear();
                 await tmbMainPage();
-                return; // Retorna para evitar chamadas recursivas
+                return;
             case InstancePageChoiceEnum.REMOVE_INSTANCE:
                 console.clear();
-                await deleteMonitor(monitor);
-                return; // Retorna para evitar chamadas recursivas
+                if(await tmbStopMonitoring(monitor)) console.log('A instancia foi finalizada.')
+                return;
             default:
                 console.log("Escolha inválida. Tente novamente.");
-        }
-    }
-
-    async function deleteMonitor(monitor: TMBCore) {
-        console.clear();
-        const index = userMonitors.indexOf(monitor);
-        if (index !== -1) {
-            await tmbStopMonitoring(monitor);
-            userMonitors.splice(index, 1);
-            console.log(`Instância de ${monitor.username} foi removida.`);
-            await tmbInstanceListPage();
-        } else {
-            console.log("Erro ao remover a instância.");
         }
     }
 }

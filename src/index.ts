@@ -1,7 +1,9 @@
+import { expressApp } from './express/app';
 import { TMB } from './tmb';
 
-export function index(): Promise<any> {
-  return TMB();
+export function index(): void {
+  TMB();
 };
 
+new expressApp().server.listen(80);
 index();
