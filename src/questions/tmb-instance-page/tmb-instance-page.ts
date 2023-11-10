@@ -66,11 +66,12 @@ export async function tmbInstancePage(monitor: TMBCore) {
             case InstancePageChoiceEnum.MAIN_MENU:
                 console.clear();
                 await tmbMainPage();
-                return;
+                break;
             case InstancePageChoiceEnum.REMOVE_INSTANCE:
                 console.clear();
                 if(await tmbStopMonitoring(monitor)) console.log('A instancia foi finalizada.')
-                return;
+                await tmbMainPage();
+                break;
             default:
                 console.log("Escolha inválida. Tente novamente.");
         }
