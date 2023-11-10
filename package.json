@@ -7,7 +7,7 @@
   "license": "MIT",
   "main": "./lib/index.js",
   "bin": {
-    "tmb": "bin/tmb"
+    "tmb": "./bin/tmb"
   },
   "keywords": [
     "cli",
@@ -26,7 +26,7 @@
     "test": "jest --coverage",
     "lint": "tslint -p . --fix",
     "build": "npm run clean:some && tsc -p .",
-    "global": "npm i -g && tmb",
+    "global": "npm i -g && node ./lib/index.js",
     "clean:some": "",
     "clean:all": "",
     "refresh": "npm run clean:all && npm install",
