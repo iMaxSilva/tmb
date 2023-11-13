@@ -67,6 +67,16 @@ class InstanceController {
         return res.json({ data: userMonitors[id].showLogs("object") });
     }
 
+    repairTrains(req: Request, res: Response) {
+        const id = Number(req.params.id);
+        userMonitors[id].automaticRepair()
+        return res.json({
+            data: {
+                message: "Começou o reparo dos trens.",
+            },
+        });
+    }
+
     calculatorRoute(req: Request, res: Response) {
         const capacity = Number(req.params.capacity);
         const passenger = Number(req.params.passenger);

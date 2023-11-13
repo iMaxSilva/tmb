@@ -3,7 +3,7 @@ import HttpClient from "../../services/http-client";
 class TMBRepair {
     private timeout: number;
     constructor(private httpClient: HttpClient) {
-        this.timeout = 15000;
+        this.timeout = 10000;
     }
 
     async manualRepair(trainId: number): Promise<boolean> {
