@@ -12,6 +12,7 @@ import { calculateMinTimeToDestination } from "../utils/calculate-time/calculate
 import { ITrainInfo } from "../models/train-info/train-info.interface";
 import { loggerControl } from "../shared/loggerControl";
 import { ILogger } from "../models/logger/logger.interface";
+import TMBTransactionInfo from "../actions/tmb-transaction-info/tmb-transaction-info";
 
 export default class TMBCore {
     public username: string;
@@ -24,6 +25,7 @@ export default class TMBCore {
     private tmbTrainInfo: TMBTrainInfo;
     private tmbDepartAll: TMBDepartAll;
     private tmbBuyMarketing: TMBBuyMarketing;
+    private tmbTransactionInfo: TMBTransactionInfo;
     private spotPct: number = 0;
     private retryCount: number = 0;
     private trainIds: number[] = [];
@@ -37,8 +39,38 @@ export default class TMBCore {
         this.tmbTrainInfo = new TMBTrainInfo(this.loggerUtil);
         this.tmbDepartAll = new TMBDepartAll(this.http, this.loggerUtil);
         this.tmbBuyMarketing = new TMBBuyMarketing(this.http, this.loggerUtil);
+        this.tmbTransactionInfo = new TMBTransactionInfo(this.http, this.loggerUtil);
 
         this.username = username;
+    }
+
+    automaticRepair(): void {
+        this.tmbRepair.automaticRepair(this.trainIds);
+    }
+
+    trainInfo(userData: IUserInfo): Record<string, ITrainInfo> {
+        return this.tmbTrainInfo.getTrainInfo(userData);
+    }
+
+    showLogs(type?: string): ILogger[] | void {
+        const logs = this.loggerUtil.getLogs();
+        if(type === 'object') {
+            return logs;
+        } else {
+            logs.forEach((log) => {
+                console.log(`${log.type} ${log.message}`);
+            });
+        }
+
+    }
+
+    start(): void {
+        this.buyMarketing();
+        this.monitorUserData();
+    }
+
+    async transactionInfo(): Promise<any> {
+        return await this.tmbTransactionInfo.getTransactionInfo();
     }
 
     async login(password: string): Promise<boolean> {
@@ -53,16 +85,8 @@ export default class TMBCore {
         await this.tmbRepair.manualRepair(trainId);
     }
 
-    automaticRepair(): void {
-        this.tmbRepair.automaticRepair(this.trainIds);
-    }
-
     async userInfo(): Promise<IUserInfo | undefined> {
         return await this.tmbUserInfo.getInfo();
-    }
-
-    trainInfo(userData: IUserInfo): Record<string, ITrainInfo> {
-        return this.tmbTrainInfo.getTrainInfo(userData);
     }
 
     async departAll(): Promise<void> {
@@ -71,23 +95,6 @@ export default class TMBCore {
 
     async buyMarketing(): Promise<void> {
         await this.tmbBuyMarketing.buyCampaign();
-    }
-
-    showLogs(type?: string): ILogger[] | void {
-        const logs = this.loggerUtil.getLogs();
-        if(type === 'object') {
-            return logs;
-        } else {
-            logs.forEach((log) => {
-                console.log(`${log.type} ${log.message}`);
-            });
-        }
-        
-    }
-
-    start(): void {
-        this.buyMarketing();
-        this.monitorUserData();
     }
 
     async monitorUserData(): Promise<void> {
@@ -101,13 +108,13 @@ export default class TMBCore {
                 this.timeout = setTimeout(() => this.monitorUserData(), 60000);
                 return;
             }
-            
+
             const trainInfo = this.trainInfo(userData!);
             const updateInterval = Math.max(
                 calculateMinTimeToDestination(trainInfo) * 1000 + 120000,
                 10000,
             );
-            
+
             this.trainIds = Object.values(trainInfo).map(
                 (train) => train.realTrainId,
             );
