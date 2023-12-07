@@ -6,6 +6,7 @@ const router: Router = Router();
 
 router.get("/instance/list", instanceController.getList);
 router.get("/instance/:id/logs", instanceController.getLogs);
+router.get("/instance/:id/transaction", instanceController.getTransactionInfo);
 router.get("/instance/:id/user-info", instanceController.getUserInfo);
 router.get("/instance/:id/enroute-list", instanceController.getEnrouteList);
 router.get("/instance/:id/repair", instanceController.repairTrains)

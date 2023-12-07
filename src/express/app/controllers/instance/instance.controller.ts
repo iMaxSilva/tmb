@@ -23,45 +23,6 @@ class InstanceController {
         }
     }
 
-    async getEnrouteList(req: Request, res: Response) {
-        try {
-            const id = Number(req.params.id);
-            const userInfo = await userMonitors[id].userInfo();
-            const trainInfo = await userMonitors[id].trainInfo(userInfo!);
-            res.json({
-                data: trainInfo,
-            });
-        } catch (err) {
-            return res.sendStatus(500);
-        }
-    }
-
-    async getUserInfo(
-        req: Request,
-        res: Response
-    ): Promise<Response<IUserInfoController | null>> {
-        try {
-            const id = Number(req.params.id);
-            const userInfo = await userMonitors[id].userInfo();
-            return res.json({
-                data: {
-                    companyName: userInfo?.userData.company,
-                    companyValue: userInfo?.userData.stock,
-                    money: userInfo?.userData.account,
-                    points: userInfo?.userData.points,
-                    energy: userInfo?.userData.spotPct,
-                    fuel: userInfo?.userData.fuelPct,
-                    parkedTrains: userInfo?.userData.station,
-                    enrouteTrains: userInfo?.userData.enroute,
-                    pendingTrains: userInfo?.userData.pending,
-                    realism: userInfo?.userData.realism === 1 ? true : false,
-                },
-            });
-        } catch (err) {
-            return res.sendStatus(500);
-        }
-    }
-
     getLogs(req: Request, res: Response) {
         const id = Number(req.params.id);
         return res.json({ data: userMonitors[id].showLogs("object") });
@@ -117,6 +78,57 @@ class InstanceController {
         };
 
         return res.json({ data: informacoes });
+    }
+
+    async getTransactionInfo(req: Request, res: Response) {
+        try {
+            const id = Number(req.params.id);
+            const transactionInfo = await userMonitors[id].transactionInfo();
+            res.json({
+                data: transactionInfo,
+            });
+        } catch (err) {
+            return res.sendStatus(500);
+        }
+    }
+
+    async getEnrouteList(req: Request, res: Response) {
+        try {
+            const id = Number(req.params.id);
+            const userInfo = await userMonitors[id].userInfo();
+            const trainInfo = await userMonitors[id].trainInfo(userInfo!);
+            res.json({
+                data: trainInfo,
+            });
+        } catch (err) {
+            return res.sendStatus(500);
+        }
+    }
+
+    async getUserInfo(
+        req: Request,
+        res: Response
+    ): Promise<Response<IUserInfoController | null>> {
+        try {
+            const id = Number(req.params.id);
+            const userInfo = await userMonitors[id].userInfo();
+            return res.json({
+                data: {
+                    companyName: userInfo?.userData.company,
+                    companyValue: userInfo?.userData.stock,
+                    money: userInfo?.userData.account,
+                    points: userInfo?.userData.points,
+                    energy: userInfo?.userData.spotPct,
+                    fuel: userInfo?.userData.fuelPct,
+                    parkedTrains: userInfo?.userData.station,
+                    enrouteTrains: userInfo?.userData.enroute,
+                    pendingTrains: userInfo?.userData.pending,
+                    realism: userInfo?.userData.realism === 1 ? true : false,
+                },
+            });
+        } catch (err) {
+            return res.sendStatus(500);
+        }
     }
 
     async stopMonitoring(req: Request, res: Response) {
