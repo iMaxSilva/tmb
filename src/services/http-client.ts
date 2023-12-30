@@ -1,18 +1,18 @@
-// httpClient.ts
 import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig } from 'axios';
 
 export interface IHttpClient {
   get<T>(url: string): Promise<AxiosResponse<T>>;
   post<T>(url: string, data: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>>;
   setCookies(cookies: string[]): void;
+  getHttpInstance(): AxiosInstance;
 }
 
 export default class HttpClient implements IHttpClient {
   private http: AxiosInstance;
 
-  constructor() {
+  constructor(baseUrl: string = 'https://trainmanager.cc') {
     this.http = axios.create({
-      baseURL: `https://trainmanager.cc`,
+      baseURL: baseUrl,
       headers: {
         'User-Agent':
           'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36',
@@ -37,7 +37,11 @@ export default class HttpClient implements IHttpClient {
     }
   }
 
-  setCookies(cookies: string[]): void {
-    this.http.defaults.headers.Cookie = cookies;
+  setCookies(cookies: string[]): string[] {
+    return this.http.defaults.headers.Cookie = cookies;
+  }
+
+  getHttpInstance(): AxiosInstance {
+    return this.http;
   }
 }
