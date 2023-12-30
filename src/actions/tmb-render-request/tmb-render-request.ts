@@ -10,14 +10,13 @@ export default class TmbRenderRequest {
 
     async refreshRender() {
         try {
-            await this.http.get('/');
-            console.log('Render refreshed successfully');
+            await this.http.get('/health');
         } catch (error) {
-            console.error('Error refreshing render:', error);
+            console.error('Error refreshing Render');
         }
     }
 
-    startAutoRefresh(intervalMs: number = 5000) {
+    startAutoRefresh(intervalMs: number = 15000) {
         if (this.refreshInterval === null) {
             this.refreshInterval = setInterval(() => this.refreshRender(), intervalMs);
         }
