@@ -11,7 +11,8 @@ router.get("/instance/:id/user-info", instanceController.getUserInfo);
 router.get("/instance/:id/enroute-list", instanceController.getEnrouteList);
 router.get("/instance/:id/repair", instanceController.repairTrains)
 router.get("/instance/:id/stopMonitoring", instanceController.stopMonitoring);
-router.get("/calculator/:capacity/:passenger/:time", instanceController.calculatorRoute)
+router.get("/calculator/:capacity/:passenger/:time", instanceController.calculatorRoute);
+router.get("/health", instanceController.health)
 router.post("/login", loginController.login);
 
 export { router };

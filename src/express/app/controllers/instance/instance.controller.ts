@@ -30,7 +30,7 @@ class InstanceController {
 
     repairTrains(req: Request, res: Response) {
         const id = Number(req.params.id);
-        userMonitors[id].automaticRepair()
+        userMonitors[id].automaticRepair();
         return res.json({
             data: {
                 message: "Começou o reparo dos trens.",
@@ -78,6 +78,12 @@ class InstanceController {
         };
 
         return res.json({ data: informacoes });
+    }
+
+    health(req: Request, res: Response) {
+        res.json({
+            health: "ok",
+        });
     }
 
     async getTransactionInfo(req: Request, res: Response) {
