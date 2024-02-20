@@ -52,6 +52,11 @@ export default class TMBCore {
         return this.tmbTrainInfo.getTrainInfo(userData);
     }
 
+    getAllTrainId(userData: IUserInfo): void {
+        const result = this.tmbTrainInfo.getAllTrainsId(userData);
+        this.trainIds.push(...result);
+    }
+
     showLogs(type?: string): ILogger[] | void {
         const logs = this.loggerUtil.getLogs();
         if(type === 'object') {
@@ -101,6 +106,7 @@ export default class TMBCore {
         try {
             const userData = await this.userInfo();
             this.spotPct = userData!.userData.spotPct;
+            this.getAllTrainId(userData!);
 
             if (userData!.userData.station > 0) {
                 await this.buyFuel();
@@ -113,10 +119,6 @@ export default class TMBCore {
             const updateInterval = Math.max(
                 calculateMinTimeToDestination(trainInfo) * 1000 + 120000,
                 10000,
-            );
-
-            this.trainIds = Object.values(trainInfo).map(
-                (train) => train.realTrainId,
             );
 
             if (loggerControl.userInfo)

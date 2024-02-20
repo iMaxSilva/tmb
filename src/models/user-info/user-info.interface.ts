@@ -1,12 +1,14 @@
 interface TrainMarker {
-    lat: number;
-    lon: number;
-    routeId: number;
-    icon: string;
+    [key: string]: {
+        lat: number;
+        lon: number;
+        routeId: number;
+        icon: string;
+    };
 }
 
 interface RouteData {
-    trainMarkers: Record<string, TrainMarker>;
+    trainMarkers: TrainMarker;
     routeLines: Record<
         string,
         {
@@ -87,4 +89,5 @@ export interface LiveData {
 export interface IUserInfo {
     userData: UserData;
     liveData: LiveData[];
+    routeData: RouteData;
 }

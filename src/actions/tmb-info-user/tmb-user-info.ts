@@ -16,6 +16,7 @@ class TMBUserInfo {
             return {
                 liveData: response.data?.liveData,
                 userData: response.data.userData,
+                routeData: response.data.routeData,
             };
         } catch (error) {
             this.loggerUtil.addLog(

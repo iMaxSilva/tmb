@@ -31,7 +31,7 @@ class TMBTrainInfo {
     }
 
     getTrainInfo(
-        userData: IUserInfo,
+        userData: IUserInfo
     ): Record<string, ITrainInfo> {
         const trainIds = Object.keys(userData?.liveData);
         const trainInfo: Record<string, ITrainInfo> = {};
@@ -44,6 +44,20 @@ class TMBTrainInfo {
         }
 
         return trainInfo;
+    }
+
+    getAllTrainsId(userData: IUserInfo) {
+        const tempIds = []    
+        if(userData.routeData?.trainMarkers) {
+                const keys = Object.keys(userData.routeData?.trainMarkers);
+                for(const key of keys){
+                    const train = userData.routeData?.trainMarkers[key];
+                    if(train.routeId !== 0){
+                        tempIds.push(Number(key));  
+                    }                  
+                }         
+            }
+            return tempIds;
     }
 
     sendTrainInfoToLogger(trainInfo: Record<string, ITrainInfo>): void {
