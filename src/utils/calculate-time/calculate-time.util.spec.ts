@@ -22,38 +22,40 @@ const liveDataMock: LiveData = {
 };
 
 describe("calculateTime", () => {
+
+    const { speedPerSec, totalDistance, secondsEnroute } = liveDataMock;
     it("should be defined", () => {
         expect(true).toBeDefined();
     });
 
     it('should return "Em espera na estação" when speedPerSec is 0', () => {
-        expect(calculateTime(liveDataMock)).toBe("Em espera na estação");
+        expect(calculateTime(speedPerSec, totalDistance, secondsEnroute)).toBe("Em espera na estação");
     });
     it("should calculate time remaining correctly", () => {
         liveDataMock.speedPerSec = 10;
-        expect(calculateTime(liveDataMock)).toBe("0h 2min 12s");
+        expect(calculateTime(speedPerSec, totalDistance, secondsEnroute)).toBe("0h 2min 12s");
     });
 });
 
 describe("calculateMinTimeToDestination", () => {
     it("should calculate the minimum time correctly", () => {
-        const trainInfo = {
-            train1: {
+        const trainInfo = [
+            {
                 lineName: "Train1",
-                realTrainId: 123,
-                timeToDestination: "1h 30min",
+                trainId: 123,
+                destinationTime: "1h 30min",
             },
-            train2: {
+            {
                 lineName: "Train1",
-                realTrainId: 123,
-                timeToDestination: "1h 15min",
+                trainId: 123,
+                destinationTime: "1h 15min",
             },
-            train3: {
+            {
                 lineName: "Train1",
-                realTrainId: 123,
-                timeToDestination: "1h 20min",
+                trainId: 123,
+                destinationTime: "1h 20min",
             },
-        };
+        ];
         expect(calculateMinTimeToDestination(trainInfo)).toBe(
             1 * 3600 + 15 * 60,
         );

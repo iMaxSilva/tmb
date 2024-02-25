@@ -102,7 +102,7 @@ class InstanceController {
         try {
             const id = Number(req.params.id);
             const userInfo = await userMonitors[id].userInfo();
-            const trainInfo = await userMonitors[id].trainInfo(userInfo!);
+            const trainInfo = await userInfo?.trainList.enroute;
             res.json({
                 data: trainInfo,
             });
