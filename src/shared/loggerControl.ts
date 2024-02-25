@@ -4,6 +4,6 @@ export interface ILoggerControl {
 }
 
 export const loggerControl: ILoggerControl = {
-    trainInfo: false,
-    userInfo: false,
+    trainInfo: true,
+    userInfo: true,
 }

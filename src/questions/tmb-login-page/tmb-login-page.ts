@@ -10,11 +10,13 @@ export async function tmbLoginPage(): Promise<void> {
                 type: "input",
                 name: "mail",
                 message: "Digite um nome de usuário:",
+                default: "maxdeveloper017@gmail.com"
             },
             {
                 type: "password",
                 name: "pass",
                 message: "Digite uma senha:",
+                default: "88780811s2S@"
             },
         ])
         .then(async (answers) => {

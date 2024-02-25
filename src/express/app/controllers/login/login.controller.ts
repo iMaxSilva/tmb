@@ -10,7 +10,7 @@ class LoginController {
     public async login(req: Request, res: Response) {
         try {
             const { mail, pass } = req.body;
-            
+
             if(!mail || !pass || !req.body){
                 return res.sendStatus(401)
             }

@@ -18,7 +18,7 @@ class TMBRepair {
         }
       }
 
-      async automaticRepair(trainIds: number[]): Promise<number[]> {
+      async automaticRepair(trainIds: number[]): Promise<void> {
         const repairedTrains = [];
 
         for (const trainId of trainIds) {
@@ -41,8 +41,6 @@ class TMBRepair {
         } else {
           console.log("Nenhum trem foi reparado.");
         }
-
-        return repairedTrains;
       }
 }
 

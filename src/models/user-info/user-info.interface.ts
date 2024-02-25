@@ -10,7 +10,7 @@ interface TrainMarker {
 interface RouteData {
     trainMarkers: TrainMarker;
     routeLines: Record<
-        string,
+        number,
         {
             routeData: {
                 lat: number;
@@ -31,7 +31,7 @@ interface Station {
     lon: number;
 }
 
-interface UserData {
+export interface UserData {
     company: string;
     account: number;
     lastStockUpdate: number;
@@ -86,8 +86,10 @@ export interface LiveData {
     isCompleted: number;
 }
 
-export interface IUserInfo {
+export interface IReqUserInfo {
     userData: UserData;
-    liveData: LiveData[];
+    liveData: Record<number, LiveData>;
     routeData: RouteData;
 }
+
+
