@@ -1,6 +1,8 @@
-import { IUserInfo } from "../../models/user-info/user-info.interface";
+import { ITMBUserInfo } from "../../models/user-info";
+import { IReqUserInfo, UserData } from "../../models/user-info";
 import HttpClient from "../../services/http-client";
 import LoggerUtil from "../../utils/logger/logger.util";
+import tmbUserInfoMapper from "./mappers/tmb-user-info.mapper";
 
 class TMBUserInfo {
     constructor(
@@ -8,16 +10,18 @@ class TMBUserInfo {
         private loggerUtil: LoggerUtil,
     ) {}
 
-    async getInfo() {
+    async getInfo(): Promise<ITMBUserInfo | undefined> {
         try {
-            const response = await this.httpClient.get<IUserInfo>(
+            const response = await this.httpClient.get<IReqUserInfo>(
                 "/data/main.user.data.php",
             );
-            return {
+            const data = {
                 liveData: response.data?.liveData,
                 userData: response.data.userData,
                 routeData: response.data.routeData,
             };
+
+            return tmbUserInfoMapper(data);
         } catch (error) {
             this.loggerUtil.addLog(
                 "[ERROR]",
@@ -26,20 +30,20 @@ class TMBUserInfo {
         }
     }
 
-    sendInfoToLogger(data: IUserInfo): void {
+    sendInfoToLogger(userData: UserData): void {
         this.loggerUtil.addLog(
             "",
             `
 ╔═════════════════════════════════════════════════════════════════╗
 ║                      Informações do Usuário                     ║
 ╚═════════════════════════════════════════════════════════════════╝
-Nome da companhia: ${data.userData.company}
-Valor da companhia: ${data.userData.stock}
-Dinheiro: ${data.userData.account}
-Pontos: ${data.userData.points}
-Diesel: ${data.userData.fuelPct}
-Energia: ${data.userData.spotPct}
-Trens estacionados: ${data.userData.station}
+Nome da companhia: ${userData.company}
+Valor da companhia: ${userData.stock}
+Dinheiro: ${userData.account}
+Pontos: ${userData.points}
+Diesel: ${userData.fuelPct}
+Energia: ${userData.spotPct}
+Trens estacionados: ${userData.station}
           `,
         );
     }

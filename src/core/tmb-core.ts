@@ -1,24 +1,23 @@
 import TMBAuth from "../actions/tmb-auth/tmb-auth";
 import { tmbBuyFuel } from "../actions/tmb-buy-fuel/tmb-buy-fuel";
 import TMBTrainInfo from "../actions/tmb-train-info/tmb-train-info";
-import TMBUserInfo from "../actions/tmb-info-user/tmb-user-info";
+import TMBUserInfo from "../actions/tmb-user-info/tmb-user-info";
 import TMBRepair from "../actions/tmb-repair/tmb-repair";
-import { IUserInfo } from "../models/user-info/user-info.interface";
 import HttpClient from "../services/http-client";
 import LoggerUtil from "../utils/logger/logger.util";
 import TMBDepartAll from "../actions/tmb-depart-all/tmb-depart-all";
 import TMBBuyMarketing from "../actions/tmb-buy-marketing/tmb-buy-marketing";
 import { calculateMinTimeToDestination } from "../utils/calculate-time/calculate-time.util";
-import { ITrainInfo } from "../models/train-info/train-info.interface";
 import { loggerControl } from "../shared/loggerControl";
 import { ILogger } from "../models/logger/logger.interface";
 import TMBTransactionInfo from "../actions/tmb-transaction-info/tmb-transaction-info";
+import { ITMBUserInfo } from "../models/user-info";
 
 export default class TMBCore {
     public username: string;
     public timeout: null | NodeJS.Timeout = null;
-    private http: HttpClient;
-    private loggerUtil: LoggerUtil;
+    private readonly http: HttpClient;
+    private readonly loggerUtil: LoggerUtil;
     private tmbAuth: TMBAuth;
     private tmbRepair: TMBRepair;
     private tmbUserInfo: TMBUserInfo;
@@ -45,17 +44,9 @@ export default class TMBCore {
     }
 
     automaticRepair(): void {
-        this.tmbRepair.automaticRepair(this.trainIds);
+        setTimeout(() => this.tmbRepair.automaticRepair(this.trainIds), 86400000)
     }
 
-    trainInfo(userData: IUserInfo): Record<string, ITrainInfo> {
-        return this.tmbTrainInfo.getTrainInfo(userData);
-    }
-
-    getAllTrainId(userData: IUserInfo): void {
-        const result = this.tmbTrainInfo.getAllTrainsId(userData);
-        this.trainIds.push(...result);
-    }
 
     showLogs(type?: string): ILogger[] | void {
         const logs = this.loggerUtil.getLogs();
@@ -71,6 +62,7 @@ export default class TMBCore {
 
     start(): void {
         this.buyMarketing();
+        this.automaticRepair();
         this.monitorUserData();
     }
 
@@ -90,7 +82,7 @@ export default class TMBCore {
         await this.tmbRepair.manualRepair(trainId);
     }
 
-    async userInfo(): Promise<IUserInfo | undefined> {
+    async userInfo(): Promise<ITMBUserInfo | undefined> {
         return await this.tmbUserInfo.getInfo();
     }
 
@@ -105,8 +97,9 @@ export default class TMBCore {
     async monitorUserData(): Promise<void> {
         try {
             const userData = await this.userInfo();
+
             this.spotPct = userData!.userData.spotPct;
-            this.getAllTrainId(userData!);
+            userData?.trainList.allTrainsIds !== undefined ? this.trainIds.push(...userData!.trainList.allTrainsIds) : [];
 
             if (userData!.userData.station > 0) {
                 await this.buyFuel();
@@ -115,16 +108,15 @@ export default class TMBCore {
                 return;
             }
 
-            const trainInfo = this.trainInfo(userData!);
             const updateInterval = Math.max(
-                calculateMinTimeToDestination(trainInfo) * 1000 + 120000,
+                calculateMinTimeToDestination(userData!.trainList.enroute) * 1000 + 120000,
                 10000,
             );
 
             if (loggerControl.userInfo)
-                await this.tmbUserInfo.sendInfoToLogger(userData!);
+                this.tmbUserInfo.sendInfoToLogger(userData!.userData);
             if (loggerControl.trainInfo)
-                await this.tmbTrainInfo.sendTrainInfoToLogger(trainInfo);
+                this.tmbTrainInfo.sendTrainInfoToLogger(userData!.trainList.enroute);
 
             this.loggerUtil.addLog(
                 "[INFO]",
