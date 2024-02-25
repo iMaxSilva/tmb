@@ -44,8 +44,9 @@ export default class TMBCore {
     }
 
     automaticRepair(): void {
-        this.tmbRepair.automaticRepair(this.trainIds);
+        setTimeout(() => this.tmbRepair.automaticRepair(this.trainIds), 86400000)
     }
+
 
     showLogs(type?: string): ILogger[] | void {
         const logs = this.loggerUtil.getLogs();
@@ -61,6 +62,7 @@ export default class TMBCore {
 
     start(): void {
         this.buyMarketing();
+        this.automaticRepair();
         this.monitorUserData();
     }
 
