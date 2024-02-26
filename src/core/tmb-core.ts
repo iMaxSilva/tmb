@@ -62,7 +62,6 @@ export default class TMBCore {
 
     start(): void {
         this.buyMarketing();
-        this.automaticRepair();
         this.monitorUserData();
     }
 
